@@ -829,6 +829,11 @@ def javascript(
     help="Scale of the webpage rendering",
 )
 @click.option("--print-background", is_flag=True, help="Print background graphics")
+@click.option(
+    "--timeout",
+    type=int,
+    help="Wait this many milliseconds before failing",
+)
 @log_console_option
 @skip_fail_options
 @bypass_csp_option
@@ -847,6 +852,7 @@ def pdf(
     height,
     scale,
     print_background,
+    timeout,
     log_console,
     skip,
     fail,
@@ -878,6 +884,7 @@ def pdf(
             p,
             auth,
             bypass_csp=bypass_csp,
+            timeout=timeout,
             auth_username=auth_username,
             auth_password=auth_password,
         )
