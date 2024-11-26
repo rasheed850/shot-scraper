@@ -854,6 +854,9 @@ def javascript(
 @silent_option
 @http_auth_options
 @proxy_options
+@browser_option
+@browser_args_option
+@user_agent_option
 def pdf(
     url,
     auth,
@@ -875,7 +878,10 @@ def pdf(
     silent,
     auth_username,
     auth_password,
-    proxy
+    proxy,
+    browser,
+    browser_args,
+    user_agent
 ):
     """
     Create a PDF of the specified page
@@ -903,7 +909,10 @@ def pdf(
             timeout=timeout,
             auth_username=auth_username,
             auth_password=auth_password,
-            proxy_url=proxy
+            proxy_url=proxy,
+            browser=browser,
+            browser_args=browser_args,
+            user_agent=user_agent
         )
         page = context.new_page()
         if log_console:
