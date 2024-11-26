@@ -81,6 +81,9 @@ def http_auth_options(fn):
     click.option("--auth-password", help="Password for HTTP Basic authentication")(fn)
     return fn
 
+def proxy_options(fn):
+    click.option("--proxy", help="Proxy url")(fn)
+    return fn
 
 def skip_or_fail(response, skip, fail):
     if skip and fail:
@@ -401,6 +404,7 @@ def _browser_context(
     bypass_csp=False,
     auth_username=None,
     auth_password=None,
+    proxy_url=None
 ):
     browser_kwargs = dict(
         headless=not interactive, devtools=devtools, args=browser_args
@@ -429,6 +433,16 @@ def _browser_context(
         context_args["http_credentials"] = {
             "username": auth_username,
             "password": auth_password,
+        }
+    if proxy_url:
+        #extract username and password from proxy url
+        username = proxy_url.split('=')[1].split(':')[0]
+        password = proxy_url.split('=')[1].split(':')[1].split('@')[0]
+        server = proxy_url.split('=')[1].split('@')[1]
+        context_args["proxy"] = {
+            "server": server,
+            "username": username,
+            "password": password
         }
     context = browser_obj.new_context(**context_args)
     if timeout:
@@ -839,6 +853,7 @@ def javascript(
 @bypass_csp_option
 @silent_option
 @http_auth_options
+@proxy_options
 def pdf(
     url,
     auth,
@@ -860,6 +875,7 @@ def pdf(
     silent,
     auth_username,
     auth_password,
+    proxy
 ):
     """
     Create a PDF of the specified page
@@ -887,6 +903,7 @@ def pdf(
             timeout=timeout,
             auth_username=auth_username,
             auth_password=auth_password,
+            proxy_url=proxy
         )
         page = context.new_page()
         if log_console:
