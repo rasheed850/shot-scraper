@@ -848,6 +848,11 @@ def javascript(
     type=int,
     help="Wait this many milliseconds before failing",
 )
+@click.option(
+    "--no-images",
+    is_flag=True,
+    help="Do not load images",
+)
 @log_console_option
 @skip_fail_options
 @bypass_csp_option
@@ -881,7 +886,8 @@ def pdf(
     proxy,
     browser,
     browser_args,
-    user_agent
+    user_agent,
+    no_images,
 ):
     """
     Create a PDF of the specified page
@@ -915,6 +921,11 @@ def pdf(
             user_agent=user_agent
         )
         page = context.new_page()
+        if(no_images):
+            page.route("**/*", lambda route: route.abort() 
+                if route.request.resource_type == "image" 
+                else route.continue_() 
+            ) 
         if log_console:
             page.on("console", console_log)
         response = page.goto(url)
